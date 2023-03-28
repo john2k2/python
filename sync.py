@@ -11,10 +11,20 @@ parser.add_argument('interval', help='sync interval in seconds', type=int)
 parser.add_argument('log_file', help='path to log file')
 args = parser.parse_args()
 
-# This code is used to sync two folders.
 
+# The first folder is the source folder, the second folder is the replica folder.
 
 def sync(source_folder, replica_folder, interval, log_file):
+    if not os.path.exists(source_folder):
+        print('The source folder does not exist')
+        create_source_folder = input(
+            'Do you want to create the source folder? (y/n) ')
+        if create_source_folder == 'y':
+            os.mkdir(source_folder)
+            os.mkdir(replica_folder)
+        else:
+            exit()
+
     while True:
         source_files = os.listdir(source_folder)
         replica_files = os.listdir(replica_folder)
@@ -32,6 +42,7 @@ def sync(source_folder, replica_folder, interval, log_file):
                     with open(log_file, 'a') as log:
                         log.write('File {} copied at {} \n'.format(
                             file, time.ctime()))
+
         for file in replica_files:
             if file not in source_files:
                 os.remove(os.path.join(replica_folder, file))
